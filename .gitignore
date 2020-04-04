@@ -1,7 +1,7 @@
 technoinst/local_settings.py
 .idea/*
 db.sqlite3
-
+*/__pycache__/*
 # dependencies
 frontend/node_modules
 frontend/.pnp
