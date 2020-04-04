@@ -1,0 +1,42 @@
+
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-items: center;
+    cursor: pointer;
+    width: inherit;
+    height: inherit;
+    margin: 3px;
+}
+
+.button40 {
+    width: 40px;
+    height: 40px;
+}
+
+.button24 {
+    width: 24px;
+    height: 24px;
+}
+
+.button32 {
+    width: 32px;
+    height: 32px;
+}
+
+.button16 {
+    width: 16px;
+    width: 16px;
+}
+
+.button>img {
+    width: inherit;
+    height: inherit;
+    transition: filter 0.2s;
+}
+
+.button>img:hover {
+    filter: invert(28%) sepia(67%) saturate(5858%) hue-rotate(264deg) brightness(89%) contrast(100%);
+}

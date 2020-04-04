@@ -1,8 +1,5 @@
-from django.http import HttpResponse
-import os
-from technoinst.settings import BASE_DIR
+from django.shortcuts import render
 
 def index(request):
-    data = open(os.path.join(BASE_DIR, 'frontend/build/index.html'), 'r').read()
-    return HttpResponse(data)
+    return render(request, "frontend/index.html")
 

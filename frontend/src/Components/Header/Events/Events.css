@@ -1,0 +1,21 @@
+.events-wrapper {
+    position: absolute;
+    right: -1000px;
+    top: 0px;
+    background: rgba(0,0,0,0);
+    width: calc(100vw + 1000px);
+    height: 100vh;
+}
+
+.events {
+    background: white;
+    width: max-content;
+    right: 1012px;
+    top: 55px;
+    padding: 15px;
+    border-radius: 10px;
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 200px);
+    overflow-y: scroll;
+    position: absolute;
+}

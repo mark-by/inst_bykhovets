@@ -1,0 +1,39 @@
+.event {
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px 0;
+    width: 100%;
+}
+
+.event__user-photo, .event__about-photo {
+    width: 32px;
+    height: 32px;
+    background-size: cover;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.event__data-wrapper {
+    max-width: 250px;
+}
+
+.event__user-photo {
+    border-radius: 50%;
+}
+
+.event__user-nickname {
+    margin-right: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.event__type {
+    margin-right: 5px;
+    cursor: pointer;
+    max-width: 100px;
+}
+
+.event__time {
+    color: gray;
+}
+

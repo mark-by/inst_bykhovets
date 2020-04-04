@@ -1,0 +1,117 @@
+.user-header-wrapper {
+    background: white;
+    border-radius: 15px;
+    box-shadow: -20px -20px 60px #ffffff,
+    20px 20px 60px #d9d9d9;
+    margin-bottom: 20px;
+    padding: 10px;
+    width: 100%;
+}
+
+.user-header-wrapper__avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 10px;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-info > .row {
+    align-items: center;
+}
+
+.user-info__name > .row {
+    align-items: center;
+}
+
+.edit-button {
+    background: white;
+    border: solid 1px gray;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 14px;
+    width: max-content;
+}
+
+.user-info__name {
+    margin: 0 10px;
+}
+
+.user-header-wrapper__user-nickname {
+    font-weight: bold;
+    font-size: 24px;
+    width: max-content;
+}
+
+.user-header-wrapper__description__name {
+    font-weight: bold;
+}
+
+.user-header-wrapper__description {
+    display: block;
+}
+
+.user-header-wrapper__description__description {
+    margin-bottom: 10px;
+}
+
+.user-header-wrapper__counters {
+    justify-content: space-between;
+}
+
+.user-header-wrapper__counters_counter {
+    align-items: center;
+    margin: 0 10px;
+}
+
+.user-header-wrapper__counters_counter > .counter {
+   font-weight: bold;
+}
+.description-wrapper {
+    flex: 2;
+}
+
+.user-header-wrapper .col-wrapper {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 10px;
+    min-height: 120px;
+}
+
+@media screen and (max-width: 768px) {
+    .user-header-wrapper {
+        flex-direction: column;
+    }
+
+    .user-header-wrapper .col-wrapper {
+        min-height: unset;
+    }
+
+    .user-info {
+        align-items: center;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .user-header-wrapper__user-nickname {
+        font-size: 18px;
+    }
+
+    .settings-button {
+        width: 24px;
+        height: 24px;
+        margin-left: 5px;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .user-header-wrapper__avatar {
+        width: 68px;
+        height: 68px;
+    }
+}

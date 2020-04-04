@@ -1,0 +1,59 @@
+.login-wrapper {
+    position: fixed;
+    justify-content: center;
+    left: 50%;
+    top: 50%;
+    width: 300px;
+    transform: translate(-50%, -50%);
+    justify-self: center;
+    background: white;
+    border-radius: 15px;
+    box-shadow: -20px -20px 60px #ffffff,
+    20px 20px 60px #d9d9d9;
+    padding: 30px;
+    margin-bottom: 10px;
+}
+
+.login-wrapper > .header__logo {
+    font-size: 32px;
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.login-form {
+    display: grid;
+}
+
+.greetings {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-wrapper  input {
+    margin-bottom: 20px;
+}
+
+.login-wrapper input[type=text], .login-wrapper input[type=email], .login-wrapper input[type=password] {
+    height: 30px;
+    text-align: center;
+    border: solid 1px gray;
+    border-radius: 5px;
+}
+
+.forgot-button {
+    width: 100%;
+    height: unset;
+    color: blueviolet;
+    font-size: 14px;
+    margin-bottom: 35px;
+}
+
+.not-familiar {
+    width: 100%;
+    text-align: center;
+}
+
+.register-button {
+    color: blueviolet;
+}
