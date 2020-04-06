@@ -6,7 +6,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.response import Response
-from .serializers import UserSerializer, SettingsUserSerializer
+from .serializers import UserSerializer, SettingsUserSerializer, ShortUserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -75,12 +75,30 @@ def settings(request):
         user.description = request.POST['description']
         user.email = request.POST['email']
         user.gender = request.POST['gender']
-        user.is_active = request.POST['disable']
+        user.is_active = False if request.POST['disable'] == "1" else True
         try:
             user.full_clean()
             user.save()
             return Response(status=status.HTTP_201_CREATED)
-        except exceptions.ValidationError:
+        except exceptions.ValidationError as e:
+            print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET', 'POST'])
+@login_required
+def change_password(request):
+    user = User.objects.get(pk=request.user.id)
+    if request.method == 'GET':
+        serializer = ShortUserSerializer(user)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        if user.check_password(request.POST['password']):
+            new_password = request.POST['new_password']
+            user.set_password(new_password)
+            user.save()
+            user = authenticate(request, username=user.username, password=new_password)
+            login(request, user)
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)

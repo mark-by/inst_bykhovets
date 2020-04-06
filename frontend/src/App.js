@@ -61,7 +61,6 @@ function App() {
 
     function handlerUser() {
         fetch('api/user_home').then(res => res.json()).then(res => {
-            console.log(res);
             setState({
                 content: <UserHome data={res} handlerLogOut={handlerLogOut} handlerSettings={handlerSettings}/>
             })
@@ -78,7 +77,7 @@ function App() {
         />
     } else {
         localStorage.setItem("authorized", "0");
-        state.content =  <LogIn handlerAuthorize={handlerAuthorize}/>;
+        state.content = <LogIn handlerAuthorize={handlerAuthorize}/>;
     }
 
     return (

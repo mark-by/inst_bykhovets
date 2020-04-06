@@ -50,6 +50,11 @@ select, textarea {
     box-shadow: none;
     font-size: 14px;
     height: 30px;
+    padding: 10px;
+}
+
+select {
+    padding: unset;
 }
 
 input, select, textarea:focus {
