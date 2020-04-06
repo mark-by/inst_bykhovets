@@ -5,16 +5,24 @@ import user_svg from '../../../../imgs/user.svg'
 import {useFetch} from "../../../useFetch";
 import cfetch from "../../../CsrfToken/cfetch";
 import Select from "../../../Forms/Select/Select";
+import setUploadedImage from "../../../Forms/setUploadedImage";
 
 function EditProfile() {
     const [data, loading] = useFetch('api/settings');
+    const [avatar, setAvatar] = React.useState({
+        src: user_svg,
+        changed: false,
+    });
 
     function submitHandler(event) {
         event.preventDefault();
         const formData = new FormData(document.getElementById('settings-form'));
         cfetch('api/settings', {
             method: 'POST',
-            body: formData
+            body: formData,
+            // headers: {
+            //     'Content-Type': 'multipart/form-data',
+            // }
         }).then(response => {
             if (response.ok) {
                 console.log('ok');
@@ -24,25 +32,32 @@ function EditProfile() {
         })
     }
 
+    if (data.avatar && !avatar.changed) {
+        avatar.src = data.avatar;
+    }
+
+    function avatarHandler(src) {
+        setAvatar({src: src, changed: true});
+    }
+
     let options = [
         {value: "m", title: "Male"},
         {value: "f", title: "Female"},
         {value: "o", title: "Other"},
         {value: "p", title: "Prefer not to say"},
-    ]
+    ];
 
-    let avatarSrc;
-    if (!data.avatar) {
-        avatarSrc = user_svg
-    } else {
-        avatarSrc = data.avatar
-    }
+
     return (
-        <form className="settings-wrapper-content" id="settings-form" onSubmit={submitHandler}>
-            <img className="settings-avatar" src={avatarSrc}/>
+        <form className="settings-wrapper-content" id="settings-form" onSubmit={submitHandler}
+              encType="multipart/form-data">
+            <img className="settings-avatar" src={avatar.src}/>
             <div className="edit-profile-info-wrapper">
                 <div className="settings__username">{data.username}</div>
-                <Button text="Change Profile Photo" class="edit-profile__change-photo"/>
+                <input type="file" name="avatar" style={{display: "none"}} id="input-avatar"
+                       onChange={(e) => setUploadedImage(e, avatarHandler)}/>
+                <Button text="Change Profile Photo" class="edit-profile__change-photo"
+                        onClick={() => document.getElementById("input-avatar").click()}/>
             </div>
             <label>Name</label>
             <input name="name" type="text" defaultValue={data.name}/>

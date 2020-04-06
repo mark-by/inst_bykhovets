@@ -1,5 +1,6 @@
 technoinst/local_settings.py
 .idea/*
+media/*
 frontend/.idea/*
 db.sqlite3
 */__pycache__/*

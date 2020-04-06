@@ -71,6 +71,8 @@ def settings(request):
         return Response(serializer.data)
     elif request.method == 'POST':
         user.username = request.POST['username']
+        user.avatar = request.FILES['avatar']
+        print(user.avatar)
         user.name = request.POST['name']
         user.description = request.POST['description']
         user.email = request.POST['email']
@@ -87,6 +89,7 @@ def settings(request):
 
 @api_view(['GET', 'POST'])
 @login_required
+@parser_classes(MultiPartParser)
 def change_password(request):
     user = User.objects.get(pk=request.user.id)
     if request.method == 'GET':

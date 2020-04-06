@@ -37,6 +37,8 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+def path_for_user_data(instance, file_name):
+    return f"users_data/{instance.id}_avatar"
 
 class User(AbstractBaseUser):
     username = models.CharField(max_length=32, unique=True)
@@ -55,7 +57,7 @@ class User(AbstractBaseUser):
                                                      ('o', 'Other'),
                                                      ('p', 'Prefer not to say')], default='p')
     rating = models.PositiveIntegerField(default=0)
-    avatar = models.ImageField(upload_to=f"users_media/{username}/", blank=True, null=True)
+    avatar = models.ImageField(upload_to=path_for_user_data, blank=True, null=True)
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["email", "name"]
