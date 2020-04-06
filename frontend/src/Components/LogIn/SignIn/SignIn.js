@@ -1,11 +1,22 @@
 import React from "react";
 import Button from "../../Button/Button";
+import CsrfToken from "../../CsrfToken/CsrfToken";
 
 function SignIn(props) {
     function submitHandler(event) {
         event.preventDefault();
-        props.handlerAuthorize();
+        const formData = new FormData(document.getElementsByClassName('login-form')[0]);
+        fetch('api/sign_in', {
+            method: 'POST',
+            body: formData,
+        }).then((response) => {
+            if (response.status === 200) {
+                localStorage.setItem('username', formData.get('username'));
+                props.handlerAuthorize()
+            }
+        })
     }
+
 
     console.log(props.data);
     return (
@@ -13,8 +24,9 @@ function SignIn(props) {
             <div className="header__logo" onClick={() => console.log("Hello, dude!")}>Techno<span>Inst</span></div>
             <div className="greetings">Hello! Who are you?</div>
             <form className="login-form" onSubmit={submitHandler}>
-                <input type="text" placeholder="Email or user name"/>
-                <input type="password" placeholder="Your password"/>
+                <CsrfToken/>
+                <input name='username' type="text" placeholder="Your username"/>
+                <input name='password' type="password" placeholder="Your password"/>
                 <input type="submit" value="Log in"/>
             </form>
             <Button class="forgot-button" text="Forgot Password?" onClick={() => console.log("forgot password")}/>

@@ -6,7 +6,7 @@ import UserHome from "./Components/MainContent/UserHome/UserHome";
 import Settings from "./Components/MainContent/Settings/Settings";
 import Search from "./Components/MainContent/Search/Search";
 import LogIn from "./Components/LogIn/LogIn";
-
+import cfetch from "./Components/CsrfToken/cfetch";
 
 function App() {
     const [state, setState] = React.useState({
@@ -40,8 +40,14 @@ function App() {
 
     function handlerLogOut() {
         localStorage.setItem("authorized", "0");
-        setState({
-            content: <LogIn handlerAuthorize={handlerAuthorize}/>
+        cfetch('api/log_out', {
+            method: 'POST',
+        }).then(response => {
+            if (response.ok) {
+                setState({
+                    content: <LogIn handlerAuthorize={handlerAuthorize}/>
+                });
+            }
         });
     }
 
@@ -54,8 +60,11 @@ function App() {
     }
 
     function handlerUser() {
-        setState({
-            content: <UserHome handlerLogOut={handlerLogOut} handlerSettings={handlerSettings}/>
+        fetch('api/user_home').then(res => res.json()).then(res => {
+            console.log(res);
+            setState({
+                content: <UserHome data={res} handlerLogOut={handlerLogOut} handlerSettings={handlerSettings}/>
+            })
         })
     }
 

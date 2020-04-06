@@ -1,11 +1,13 @@
 technoinst/local_settings.py
 .idea/*
+frontend/.idea/*
 db.sqlite3
 */__pycache__/*
 # dependencies
 frontend/node_modules
 frontend/.pnp
 frontend/.pnp.js
+venv/*
 
 # testing
 frontend/coverage
@@ -23,10 +25,11 @@ frontend/.env.production.local
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+frontend/public/*
+frontend/__package.json
 
 *.log
 *.pot
 *.pyc
 __pycache__
 
-venv

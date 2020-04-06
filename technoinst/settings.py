@@ -12,11 +12,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.messages',
+    # 'django.contrib.messages',
     'django.contrib.staticfiles',
     'leads',
     'rest_framework',
@@ -50,6 +49,8 @@ TEMPLATES = [
         },
     },
 ]
+
+AUTH_USER_MODEL = 'leads.User'
 
 WSGI_APPLICATION = 'technoinst.wsgi.application'
 

@@ -1,10 +1,20 @@
 import React from "react";
 import Button from "../../Button/Button";
+import cfetch from "../../CsrfToken/cfetch";
 
 function SignUp(props) {
     function submitHandler(event) {
-       event.preventDefault();
-       props.handlerAuthorize();
+        event.preventDefault();
+        const formData = new FormData(document.getElementsByClassName('login-form')[0]);
+        localStorage.setItem('username', formData.get('username'));
+        cfetch('api/register', {
+            method: 'POST',
+            body: formData,
+        }).then((response) => {
+            if (response.ok) {
+                props.handlerAuthorize();
+            }
+        });
     }
 
     return (
@@ -12,10 +22,10 @@ function SignUp(props) {
             <div className="header__logo" onClick={() => console.log("Hello, dude!")}>Techno<span>Inst</span></div>
             <div className="greetings">Nice to meet you!</div>
             <form className="login-form" onSubmit={submitHandler}>
-                <input type="email" placeholder="Email"/>
-                <input type="text" placeholder="Full Name"/>
-                <input type="text" placeholder="Username"/>
-                <input type="password" placeholder="Your password"/>
+                <input name='email' type="email" placeholder="Email"/>
+                <input name='name' type="text" placeholder="Full Name"/>
+                <input name='username' type="text" placeholder="Username"/>
+                <input name='password' type="password" placeholder="Your password"/>
                 <input type="submit" value="Sign up"/>
             </form>
             <div className="not-familiar-wrapper">
