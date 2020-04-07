@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from datetime import datetime
+from .functions import get_hashtags
 import django.core.exceptions as exceptions
 
 
@@ -37,8 +39,10 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
 def path_for_user_data(instance, file_name):
     return f"users_data/{instance.id}_avatar"
+
 
 class User(AbstractBaseUser):
     username = models.CharField(max_length=32, unique=True)
@@ -85,18 +89,33 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
+    class Meta:
+        ordering = ['-date_joined']
+
 
 class Comment(models.Model):
     author = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
+    post = models.ForeignKey('Post', related_name='comments', on_delete=models.CASCADE)
     comment = models.TextField(max_length=512)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.comment)[:30]
 
+    class Meta:
+        ordering = ['-created_at']
+
+
+class Tag(models.Model):
+    title = models.CharField(max_length=64, unique=True)
+
+    def __str__(self):
+        return self.title
+
 
 def path_for_posts(instance, filename):
-    return f'posts/%Y/%m/{instance.pk}_{filename.lower().replace(" ", "_")}'
+    now = str(datetime.now()).replace(' ', '_').replace('.', '_').split('-')
+    return f'posts/{now[0]}/{now[1]}/{now[2]}_{filename.lower().replace(" ", "_")}'
 
 
 class Post(models.Model):
@@ -104,21 +123,47 @@ class Post(models.Model):
     content = models.ImageField(upload_to=path_for_posts)
     description = models.TextField(max_length=512, blank=True, null=True, default=None)
     create_at = models.DateTimeField(auto_now_add=True)
+    tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
 
+    @property
     def get_total_likes(self):
         return self.likes.users.count()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        tags = get_hashtags(self.description)
+        tags_objects = [Tag(title=tag) for tag in tags]
+        for tag in tags_objects:
+            try:
+                tag.full_clean()
+                tag.save()
+            except exceptions.ValidationError:
+                try:
+                    tag = Tag.objects.get(title=tag.title)
+                    tag.save()
+                    tag.posts.add(self)
+                except:
+                    pass
+        try:
+            self.tags.set(tags_objects)
+        except:
+            pass
+
 
     def __str__(self):
         return str(self.description)[:30]
 
+    class Meta:
+        ordering = ['-create_at']
+
 
 class Like(models.Model):
-    post = models.OneToOneField(Post, related_name="likes", on_delete=models.CASCADE)
-    users = models.ManyToManyField(User, related_name='post_likes')
+    post = models.ForeignKey(Post, related_name="likes", on_delete=models.CASCADE)
+    users = models.ForeignKey(User, related_name='post_likes', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Subscription(models.Model):
     author = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
-    followers = models.ManyToManyField(User, related_name="followers")
+    followers = models.ForeignKey(User, related_name="followers", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

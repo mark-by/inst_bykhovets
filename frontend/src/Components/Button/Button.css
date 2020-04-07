@@ -37,6 +37,6 @@
     transition: filter 0.2s;
 }
 
-.button>img:hover {
+.filtered-on-hover>img:hover {
     filter: invert(28%) sepia(67%) saturate(5858%) hue-rotate(264deg) brightness(89%) contrast(100%);
 }

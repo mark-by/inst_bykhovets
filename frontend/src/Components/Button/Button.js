@@ -27,6 +27,11 @@ function Button (props) {
     if (props.class) {
       state.classes.push(props.class);
     }
+
+    if (!props.noFilterOnHover) {
+        state.classes.push('filtered-on-hover');
+    }
+
     return (
       <div className={state.classes.join(" ")} onClick={(event) => props.onClick(event)}>
         {contain}

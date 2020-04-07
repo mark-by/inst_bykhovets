@@ -6,13 +6,13 @@ function Lenta () {
 
     return (
         <div className="lenta-wrapper">
-            <Post />
-            <Post />
-            <Post />
-            <Post />
-            <Post />
-            <Post />
-            <Post />
+            <Post  imgSrc="https://picsum.photos/512"/>
+            <Post imgSrc="https://picsum.photos/512"/>
+            <Post imgSrc="https://picsum.photos/512"/>
+            <Post imgSrc="https://picsum.photos/512"/>
+            <Post imgSrc="https://picsum.photos/512"/>
+            <Post imgSrc="https://picsum.photos/512"/>
+            <Post imgSrc="https://picsum.photos/512"/>
         </div>
     )
 }

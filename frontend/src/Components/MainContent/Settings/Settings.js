@@ -6,11 +6,11 @@ import ChangePassword from "./Change Password/ChangePassword";
 
 function Settings(props) {
     const [state, setState] = React.useState({
-        settings: <EditProfile/>,
+        settings: <EditProfile avatar={props.avatar} avatarHandler={props.avatarHandler}/>,
     });
 
     if (props.type === "changePassword") {
-        state.settings = <ChangePassword/>
+        state.settings = <ChangePassword avatar={props.avatar}/>
     }
 
     return(
@@ -18,11 +18,11 @@ function Settings(props) {
             <div className="settings-controls">
                 <Button class="settings-controls__button"
                         text="Edit Profile"
-                        onClick={()=>setState({settings:<EditProfile/>})}/>
+                        onClick={()=>setState({settings:<EditProfile avatar={props.avatar} avatarHandler={props.avatarHandler}/>})}/>
                 <Button
                     class="settings-controls__button"
                     text="Change Password"
-                    onClick={()=>setState({settings: <ChangePassword/>})}/>
+                    onClick={()=>setState({settings: <ChangePassword avatar={props.avatar}/>})}/>
             </div>
             {state.settings}
         </div>

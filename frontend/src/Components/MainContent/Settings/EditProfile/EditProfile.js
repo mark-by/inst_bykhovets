@@ -7,12 +7,13 @@ import cfetch from "../../../CsrfToken/cfetch";
 import Select from "../../../Forms/Select/Select";
 import setUploadedImage from "../../../Forms/setUploadedImage";
 
-function EditProfile() {
+function EditProfile(props) {
     const [data, loading] = useFetch('api/settings');
     const [avatar, setAvatar] = React.useState({
-        src: user_svg,
+        src: props.avatar.src,
         changed: false,
     });
+
 
     function submitHandler(event) {
         event.preventDefault();
@@ -20,21 +21,19 @@ function EditProfile() {
         cfetch('api/settings', {
             method: 'POST',
             body: formData,
-            // headers: {
-            //     'Content-Type': 'multipart/form-data',
-            // }
         }).then(response => {
             if (response.ok) {
                 console.log('ok');
+                props.avatarHandler(avatar.src, false);
             } else {
                 console.log(response.status)
             }
         })
     }
 
-    if (data.avatar && !avatar.changed) {
-        avatar.src = data.avatar;
-    }
+    // if (avatar && !avatar.changed) {
+    //     avatar.src = data.avatar;
+    // }
 
     function avatarHandler(src) {
         setAvatar({src: src, changed: true});

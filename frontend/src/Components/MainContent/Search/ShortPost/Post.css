@@ -9,12 +9,6 @@
     cursor: pointer;
 }
 
-.browsed-post:hover {
-    z-index: 10;
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.3));
-}
-
 @media screen and (max-width: 1200px) {
     .browsed-post {
         width: 229px;

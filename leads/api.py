@@ -1,12 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import django.core.exceptions as exceptions
-from leads.models import User
+from leads.models import User, Post, Tag
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.response import Response
-from .serializers import UserSerializer, SettingsUserSerializer, ShortUserSerializer
+from .serializers import UserSerializer, SettingsUserSerializer, ShortUserSerializer, ShortPostSerializer, \
+    PostSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -71,7 +72,10 @@ def settings(request):
         return Response(serializer.data)
     elif request.method == 'POST':
         user.username = request.POST['username']
-        user.avatar = request.FILES['avatar']
+        try:
+            user.avatar = request.FILES['avatar']
+        except:
+            pass
         print(user.avatar)
         user.name = request.POST['name']
         user.description = request.POST['description']
@@ -89,7 +93,6 @@ def settings(request):
 
 @api_view(['GET', 'POST'])
 @login_required
-@parser_classes(MultiPartParser)
 def change_password(request):
     user = User.objects.get(pk=request.user.id)
     if request.method == 'GET':
@@ -105,3 +108,32 @@ def change_password(request):
             return Response(status=status.HTTP_201_CREATED)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'POST'])
+@login_required
+def post(request):
+    user = request.user
+    if request.method == 'GET':
+        if 'self' in request.GET:
+            posts = user.post.all()
+            serializer = ShortPostSerializer(posts, many=True)
+            return Response(serializer.data)
+        if 'id' in request.GET:
+            post = user.post.get(pk=request.GET['id'])
+            serializer = PostSerializer(post)
+            return Response(serializer.data)
+        return Response(status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'POST':
+        try:
+            image = request.FILES['image']
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        description = request.POST['description']
+        post = Post(author=user, content=image, description=description)
+        try:
+            post.full_clean()
+        except exceptions.ValidationError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        post.save()
+        return Response(status=status.HTTP_201_CREATED)

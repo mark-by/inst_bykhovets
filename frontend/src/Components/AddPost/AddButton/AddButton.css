@@ -1,0 +1,34 @@
+.main-add-button {
+    background: white;
+    position: fixed;
+    right: 50%;
+    bottom: 10px;
+    transform: translate(50%, 0);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    opacity: 50%;
+    transition: 0.2s opacity;
+}
+
+.main-add-button span {
+    border: solid black 3px;
+    border-radius: 2px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.main-add-button span:nth-child(1) {
+    width: 60%;
+}
+
+.main-add-button span:nth-child(2) {
+    height: 60%;
+}
+
+.main-add-button:hover {
+    opacity: 100%;
+    cursor: pointer;
+}
