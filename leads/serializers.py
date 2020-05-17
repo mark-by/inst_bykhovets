@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from leads.models import User, Post
+from leads.models import User, Post, Comment
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,19 +13,36 @@ class UserSerializer(serializers.ModelSerializer):
 class SettingsUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'description', 'name', 'avatar', 'gender')
+        fields = ('username', 'email', 'description', 'name', 'avatar', 'gender', 'is_active')
+
+
+class SignUpUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'name', 'password')
 
 
 class ShortUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'avatar')
+        fields = ('username', 'avatar', 'id')
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = ShortUserSerializer(many=False)
+
+    class Meta:
+        model = Comment
+        fields = ('author', 'comment', 'created_at')
 
 
 class PostSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True)
+    author = ShortUserSerializer(many=False)
+
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = ('author', 'content', 'description', 'create_at', 'tags', 'total_likes', 'comments')
 
 
 class ShortPostSerializer(serializers.ModelSerializer):

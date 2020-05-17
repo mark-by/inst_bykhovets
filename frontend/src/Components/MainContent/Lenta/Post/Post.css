@@ -27,6 +27,10 @@
     margin: 0 5px;
 }
 
+.post__header_user-avatar > img {
+    border-radius: 50%;
+}
+
 .post {
     width: 525px;
     margin-bottom: 10px;

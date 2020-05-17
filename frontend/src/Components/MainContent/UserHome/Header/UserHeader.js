@@ -20,11 +20,16 @@ function UserHeader(props) {
         {title: "Log out", function: () => props.handlerLogOut()},
     ];
 
+    let avatar = user_svg;
+    if (props.data.avatar) {
+        avatar = props.data.avatar;
+    }
+
     return (
         <div className="user-header-wrapper row">
             <div className="user-info col">
                 <div className="row">
-                    <img className="user-header-wrapper__avatar" src={props.avatar.src}/>
+                    <img className="user-header-wrapper__avatar" src={avatar}/>
                     <div className="user-info__name">
                         <div className="row">
                             <p className="user-header-wrapper__user-nickname">{props.data.username}</p>

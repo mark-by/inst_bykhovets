@@ -9,11 +9,15 @@ import LogIn from "./Components/LogIn/LogIn";
 import cfetch from "./Components/CsrfToken/cfetch";
 import AddButton from "./Components/AddPost/AddButton/AddButton";
 import user_svg from './imgs/user.svg'
+import Cookies from 'js-cookie';
 
 
 function App() {
+
+    let lenta = <Lenta handlerGetUser={handlerGetUser}/>
+
     const [state, setState] = React.useState({
-        content: <Lenta/>,
+        content: lenta,
         type: "home",
         isAuthorized: false,
     });
@@ -27,6 +31,12 @@ function App() {
 
     async function fetchUrl(url) {
         const response = await fetch(url);
+        if (!response.ok) {
+            setState({
+                content: <LogIn handlerAuthorize={handlerAuthorize}/>,
+                type: "login"
+            });
+        }
         const json = await response.json();
         setUserData(json);
         setAvatar({src: json.avatar ? json.avatar : user_svg})
@@ -59,7 +69,7 @@ function App() {
 
     function handlerHome() {
         setState({
-            content: <Lenta/>,
+            content: lenta,
             type: "home",
         });
     }
@@ -71,7 +81,8 @@ function App() {
         }).then(response => {
             if (response.ok) {
                 setState({
-                    content: <LogIn handlerAuthorize={handlerAuthorize}/>
+                    content: <LogIn handlerAuthorize={handlerAuthorize}/>,
+                    type: "login"
                 });
             }
         });
@@ -83,37 +94,40 @@ function App() {
 
     function handlerAuthorize() {
         setState({
-            content: <Lenta/>,
+            content: lenta,
             type: "home"
         });
         fetchUrl('api/user_home');
         localStorage.setItem("authorized", "1");
         handlerHome();
+        j
     }
 
     function handlerUser() {
         fetch('api/user_home').then(res => res.json()).then(res => {
             setState({
-                content: <UserHome avatar={avatar} isHome={true} data={res} handlerLogOut={handlerLogOut}
+                content: <UserHome isHome={true} data={res} handlerLogOut={handlerLogOut}
                                    handlerSettings={handlerSettings}/>,
                 type: "userhome"
             })
         })
     }
 
-    function handlerGetUser(username) {
-        fetch('api/user?username=' + username).then(res => res.json()).then(res => {
+    function handlerGetUser(userId) {
+        fetch('api/user_home?id=' + userId).then(res => {
+            if (res.ok) {
+                return res.json();
+            }
+        }).then(res => {
             setState({
-                content: <UserHome isHome={false} data={res} handlerLogOut={handlerLogOut}
-                                   handlerSettings={handlerSettings}/>,
+                content: <UserHome isHome={false} data={res} id={userId}/>,
                 type: "getuser",
             })
         })
     }
 
-
     let header;
-    if (localStorage.getItem("authorized") === "1") {
+    if (Cookies.get("authorized") === "1") {
         header = <Header
             avatar={avatar}
             searchAction={handlerSearch}
@@ -122,12 +136,11 @@ function App() {
             userAction={handlerUser}
         />
     } else {
-        localStorage.setItem("authorized", "0");
         state.content = <LogIn handlerAuthorize={handlerAuthorize}/>;
     }
 
     let addbutton;
-    if (localStorage.getItem("authorized") === "1" && (
+    if (Cookies.get("authorized") === "1" && (
         state.type === "home" ||
         state.type === "userhome" ||
         state.type === "search"

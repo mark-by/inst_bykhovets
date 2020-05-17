@@ -17,6 +17,8 @@ function Search(props) {
     React.useEffect(() => {
         if (props.isHome) {
             fetchUrl('api/post?self=1');
+        } else {
+            fetchUrl('api/get_user_posts?id=' + props.id);
         }
     }, []);
 

@@ -81,7 +81,7 @@ class User(AbstractBaseUser):
         return self.post.count()
 
     def __str__(self):
-        return self.email + " : " + self.username
+        return self.username
 
     def has_perm(self, perm, obj=None):
         return self.is_admin
@@ -126,8 +126,8 @@ class Post(models.Model):
     tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
 
     @property
-    def get_total_likes(self):
-        return self.likes.users.count()
+    def total_likes(self):
+        return self.likes.count()
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -159,9 +159,11 @@ class Post(models.Model):
 
 class Like(models.Model):
     post = models.ForeignKey(Post, related_name="likes", on_delete=models.CASCADE)
-    users = models.ForeignKey(User, related_name='post_likes', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='post_likes', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('user', 'post')
 
 class Subscription(models.Model):
     author = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)

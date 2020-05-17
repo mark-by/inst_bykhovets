@@ -5,6 +5,7 @@ import user_svg from '../../../../imgs/user.svg'
 import {useFetch} from "../../../useFetch";
 import cfetch from "../../../CsrfToken/cfetch";
 import Select from "../../../Forms/Select/Select";
+import Input from "../../../Forms/Input/Input";
 import setUploadedImage from "../../../Forms/setUploadedImage";
 
 function EditProfile(props) {
@@ -13,6 +14,7 @@ function EditProfile(props) {
         src: props.avatar.src,
         changed: false,
     });
+    let [errors, setErrors] = React.useState({});
 
 
     function submitHandler(event) {
@@ -22,18 +24,16 @@ function EditProfile(props) {
             method: 'POST',
             body: formData,
         }).then(response => {
-            if (response.ok) {
-                console.log('ok');
-                props.avatarHandler(avatar.src, false);
-            } else {
-                console.log(response.status)
+            if (!response.ok) {
+                response.json().then(err => {
+                    setErrors(err);
+                });
             }
+            console.log('ok');
+            props.avatarHandler(avatar.src, false);
+            setErrors({});
         })
     }
-
-    // if (avatar && !avatar.changed) {
-    //     avatar.src = data.avatar;
-    // }
 
     function avatarHandler(src) {
         setAvatar({src: src, changed: true});
@@ -46,6 +46,7 @@ function EditProfile(props) {
         {value: "p", title: "Prefer not to say"},
     ];
 
+    console.log("errors in edit profile", errors);
 
     return (
         <form className="settings-wrapper-content" id="settings-form" onSubmit={submitHandler}
@@ -59,21 +60,21 @@ function EditProfile(props) {
                         onClick={() => document.getElementById("input-avatar").click()}/>
             </div>
             <label>Name</label>
-            <input name="name" type="text" defaultValue={data.name}/>
+            <Input name="name" type="text" defaultValue={data.name}/>
             <label>Username</label>
-            <input name="username" type="text" defaultValue={data.username}/>
+            <Input label="Username" name="username" type="text" defaultValue={data.username} error={errors.username}/>
             <label>Bio</label>
             <textarea name="description" defaultValue={data.description}/>
             <label>Email</label>
-            <input name="email" type="email" defaultValue={data.email}/>
+            <Input name="email" type="email" defaultValue={data.email} error={errors.email}/>
             <label>Gender</label>
             <Select name="gender" id="gender" options={options} selected={data.gender}/>
             <div className="end-settings-wrapper">
                 <Button class="disable-button" text="Disable my account"
                         onClick={() => {
-                            document.getElementById('disable-account').value = "1"
+                            document.getElementById('disable-account').removeAttribute("checked")
                         }}/>
-                <input name="disable" id="disable-account" type="hidden" defaultValue="0"/>
+                <input name="is_active" id="disable-account" type="checkbox" style={{display: "none"}} checked/>
                 <input type="submit" value="Submit"/>
             </div>
         </form>

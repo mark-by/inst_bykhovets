@@ -1,13 +1,15 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import django.core.exceptions as exceptions
-from leads.models import User, Post, Tag
+from leads.models import User, Post, Tag, Like
+from leads.forms import EditProfileName
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.response import Response
+from django.db.utils import IntegrityError
 from .serializers import UserSerializer, SettingsUserSerializer, ShortUserSerializer, ShortPostSerializer, \
-    PostSerializer
+    PostSerializer, SignUpUserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -26,7 +28,9 @@ def sign_in(request):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
-        return Response(status=status.HTTP_200_OK)
+        response = Response(status=status.HTTP_200_OK)
+        response.set_cookie("authorized", 1, 1209600, 1209600)
+        return response
     else:
         return Response(status=status.HTTP_403_FORBIDDEN)
 
@@ -35,26 +39,36 @@ def sign_in(request):
 @parser_classes([MultiPartParser])
 def log_out(request):
     logout(request)
-    return Response(status=status.HTTP_200_OK)
+    response = Response(status=status.HTTP_200_OK)
+    response.delete_cookie("authorized")
+    return response
 
 
 @api_view(['POST'])
 @parser_classes([MultiPartParser])
 def register(request):
-    email = request.POST['email']
-    username = request.POST['username']
-    name = request.POST['name']
-    password = request.POST['password']
-    User.objects.create_user(email, username, name, password)
-    user = authenticate(request, username=username, password=password)
-    login(request, user)
-    return Response(status=status.HTTP_201_CREATED)
+    serializer = SignUpUserSerializer(data=request.data)
+    if serializer.is_valid():
+        email = request.POST['email']
+        username = request.POST['username']
+        name = request.POST['name']
+        password = request.POST['password']
+        User.objects.create_user(email, username, name, password)
+        user = authenticate(request, username=username, password=password)
+        login(request, user)
+        response = Response(status=status.HTTP_201_CREATED)
+        response.set_cookie("authorized", 1, 1209600, 1209600)
+        return response
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
 @login_required
 def user_home(request):
-    user_id = request.user.id
+    if 'id' in request.GET:
+        user_id = request.GET['id']
+    else:
+        user_id = request.user.id
     try:
         founded_user = User.objects.get(pk=user_id)
         serializer = UserSerializer(founded_user)
@@ -66,29 +80,15 @@ def user_home(request):
 @api_view(['GET', 'POST'])
 @login_required
 def settings(request):
-    user = User.objects.get(pk=request.user.id)
     if request.method == 'GET':
-        serializer = SettingsUserSerializer(user)
+        serializer = SettingsUserSerializer(request.user)
         return Response(serializer.data)
     elif request.method == 'POST':
-        user.username = request.POST['username']
-        try:
-            user.avatar = request.FILES['avatar']
-        except:
-            pass
-        print(user.avatar)
-        user.name = request.POST['name']
-        user.description = request.POST['description']
-        user.email = request.POST['email']
-        user.gender = request.POST['gender']
-        user.is_active = False if request.POST['disable'] == "1" else True
-        try:
-            user.full_clean()
-            user.save()
+        serializer = SettingsUserSerializer(request.user, request.data)
+        if serializer.is_valid():
+            serializer.save()
             return Response(status=status.HTTP_201_CREATED)
-        except exceptions.ValidationError as e:
-            print(e)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'POST'])
@@ -120,9 +120,10 @@ def post(request):
             serializer = ShortPostSerializer(posts, many=True)
             return Response(serializer.data)
         if 'id' in request.GET:
-            post = user.post.get(pk=request.GET['id'])
+            post = Post.objects.get(pk=request.GET['id'])
             serializer = PostSerializer(post)
-            return Response(serializer.data)
+            is_liked = True if request.user.post_likes.filter(post=post) else False
+            return Response({'post': serializer.data, 'is_liked': is_liked})
         return Response(status.HTTP_400_BAD_REQUEST)
     elif request.method == 'POST':
         try:
@@ -137,3 +138,27 @@ def post(request):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         post.save()
         return Response(status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+@login_required
+def get_user_posts(request):
+    if 'id' not in request.GET:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    posts = User.objects.get(pk=request.GET['id']).post.all()
+    serializer = ShortPostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@login_required
+@parser_classes([JSONParser])
+def like(request):
+    post = Post.objects.get(pk=request.data['id'])
+    new_like = Like(post=post, user=request.user)
+    try:
+        new_like.save()
+    except IntegrityError as e:
+        Like.objects.filter(user=request.user).delete()
+
+    return Response({'likes': post.likes.count()}, status=status.HTTP_201_CREATED)

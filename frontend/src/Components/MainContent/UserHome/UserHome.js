@@ -4,14 +4,11 @@ import UserHeader from "./Header/UserHeader";
 import {useFetch} from "../../useFetch";
 
 function UserHome(props) {
-    const [state, setState] = React.useState({
-        type : props.isHome,
-    });
     return (
         <div className="home-wrapper">
-            <UserHeader avatar={props.avatar} handlerLogOut={props.handlerLogOut} handlerSettings={props.handlerSettings}
+            <UserHeader handlerLogOut={props.handlerLogOut} handlerSettings={props.handlerSettings}
                         data={props.data}/>
-            <Search data={props.data} isHome={true}/>
+            <Search data={props.data} isHome={props.isHome} id={props.id}/>
         </div>
     );
 }

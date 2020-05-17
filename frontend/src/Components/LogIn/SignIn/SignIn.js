@@ -3,6 +3,11 @@ import Button from "../../Button/Button";
 import CsrfToken from "../../CsrfToken/CsrfToken";
 
 function SignIn(props) {
+    const [greetings, setGreetings] = React.useState({
+        message: "Hello! Who are you?",
+        styles: {}
+    })
+
     function submitHandler(event) {
         event.preventDefault();
         const formData = new FormData(document.getElementsByClassName('login-form')[0]);
@@ -10,9 +15,10 @@ function SignIn(props) {
             method: 'POST',
             body: formData,
         }).then((response) => {
-            if (response.status === 200) {
-                localStorage.setItem('username', formData.get('username'));
+            if (response.ok) {
                 props.handlerAuthorize()
+            } else {
+                setGreetings({message: "Wrong!", styles: {color:"red"}});
             }
         })
     }
@@ -22,7 +28,7 @@ function SignIn(props) {
     return (
         <div className="login-wrapper">
             <div className="header__logo" onClick={() => console.log("Hello, dude!")}>Techno<span>Inst</span></div>
-            <div className="greetings">Hello! Who are you?</div>
+            <div className="greetings" style={greetings.styles}>{greetings.message}</div>
             <form className="login-form" onSubmit={submitHandler}>
                 <CsrfToken/>
                 <input name='username' type="text" placeholder="Your username"/>
