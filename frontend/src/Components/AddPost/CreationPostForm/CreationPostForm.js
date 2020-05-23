@@ -30,8 +30,7 @@ function CreationPostForm(props) {
                    post_counter.innerText = (parseInt(post_counter.innerText) + 1).toString()
                }
                if (props.getState().type === "userhome") {
-                   let event = new Event('refresh');
-                   document.getElementById('search-wrapper').click();
+                   props.searchPostHandler();
                }
            } else {
                console.log(res.status)

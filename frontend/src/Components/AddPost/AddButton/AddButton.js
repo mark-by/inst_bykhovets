@@ -19,7 +19,7 @@ function AddButton(props) {
     }
 
     if (state.isOpen) {
-        state.content = <CreationPostForm getState={props.getState} closeHandler={closeHandler}/>
+        state.content = <CreationPostForm getState={props.getState} closeHandler={closeHandler} searchPostHandler={props.searchPostHandler}/>
     } else {
         state.content = button;
     }

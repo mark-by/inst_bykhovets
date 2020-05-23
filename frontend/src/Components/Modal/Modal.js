@@ -14,7 +14,7 @@ function Modal(props) {
          <div className="modal">
              {props.buttons.map((button, idx) => {
                  return (
-                     <Button class="modal-button" text={button.title} onClick={()=>button.function()}/>
+                     <Button class="modal-button" text={button.title} onClick={()=>button.function()} key={idx}/>
                  );
              })}
              <Button class="modal-cancel-button" text="Cancel" onClick={()=>props.cancelAction()}/>

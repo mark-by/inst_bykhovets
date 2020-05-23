@@ -4,40 +4,20 @@ import "./Search.css"
 import {useFetch} from "../../useFetch";
 
 function Search(props) {
-    const [data, setData] = React.useState(null);
-    const [loading, setLoading] = React.useState(true);
-
-    async function fetchUrl(url) {
-        const response = await fetch(url);
-        const json = await response.json();
-        setData(json);
-        setLoading(false);
-    }
-
-    React.useEffect(() => {
-        if (props.isHome) {
-            fetchUrl('api/post?self=1');
-        } else {
-            fetchUrl('api/get_user_posts?id=' + props.id);
-        }
-    }, []);
+    let posts = props.posts;
 
     let content;
-    if (!loading) {
-        content = data.map((post, idx) => {
+    if (posts) {
+        content = posts.map((post, idx) => {
             return (
-                <ShortPost img_src={post.content} id={post.id} key={idx}/>
+                <ShortPost img_src={post.content} id={post.id} key={idx} handlerGetUser={props.handlerGetUser}
+                actionAfterDeletePost={props.actionAfterDeletePost}/>
             )
         })
     }
 
     return (
-        <div className="search-wrapper" id="search-wrapper" onClick={(event) => {
-            if (event.target === document.getElementById('search-wrapper')) {
-                setLoading(true);
-                fetchUrl('api/post?self=1')
-            }
-        }}>
+        <div className="search-wrapper" id="search-wrapper">
             {content}
         </div>
     );

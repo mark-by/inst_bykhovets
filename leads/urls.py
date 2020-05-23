@@ -2,10 +2,7 @@ from rest_framework import routers
 from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings as django_settings
-from .api import (UserViewSet, sign_in, log_out,
-                  register, user_home, settings,
-                  change_password, post, get_user_posts,
-                  like)
+from .api import *
 
 router = routers.DefaultRouter()
 
@@ -18,5 +15,11 @@ urlpatterns = router.get_urls() + [
     path('api/like', like),
     path('api/settings', settings),
     path('api/change_password', change_password),
+    path('api/comment', comment),
     path('api/post', post),
+    path('api/delete_post', delete_post),
+    path('api/header_data', header_data),
+    path('api/follow', follow),
+    path('api/get_user', get_user),
+    path('api/index', index),
 ] + static(django_settings.MEDIA_URL, document_root=django_settings.MEDIA_ROOT)

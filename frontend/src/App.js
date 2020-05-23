@@ -13,8 +13,8 @@ import Cookies from 'js-cookie';
 
 
 function App() {
-
     let lenta = <Lenta handlerGetUser={handlerGetUser}/>
+    let [searchPosts, setSearchPosts] = React.useState([]);
 
     const [state, setState] = React.useState({
         content: lenta,
@@ -40,21 +40,38 @@ function App() {
         const json = await response.json();
         setUserData(json);
         setAvatar({src: json.avatar ? json.avatar : user_svg})
+        localStorage.setItem('id', json.id);
     }
 
     React.useEffect(() => {
-        fetchUrl('api/user_home');
+        fetchUrl('api/header_data');
     }, []);
+
+    async function fetchOwnPost() {
+        const response = await fetch('api/get_user_posts');
+        if (response.ok) {
+            const json = await response.json();
+            setSearchPosts(json);
+        }
+    }
+
+    async function fetchPost(id) {
+        const response = await fetch('api/get_user_posts?id=' + id);
+        if (response.ok) {
+            const json = await response.json();
+            setSearchPosts(json);
+        }
+    }
 
     function handlerSearch(someData) {
         setState({
-            content: <Search data={someData}/>
+            content: <Search data={someData} handlerGetUser={handlerGetUser}/>
         })
     }
 
     function handlerBrowse() {
         setState({
-            content: <Search/>,
+            content: <Search handlerGetUser={handlerGetUser}/>,
             type: "search"
         })
     }
@@ -92,38 +109,45 @@ function App() {
         return (state)
     }
 
-    function handlerAuthorize() {
+    async function handlerAuthorize() {
         setState({
             content: lenta,
             type: "home"
         });
-        fetchUrl('api/user_home');
+        const response = await fetchUrl('api/header_data');
         localStorage.setItem("authorized", "1");
         handlerHome();
-        j
     }
 
     function handlerUser() {
         fetch('api/user_home').then(res => res.json()).then(res => {
+            searchPosts = res.posts;
             setState({
-                content: <UserHome isHome={true} data={res} handlerLogOut={handlerLogOut}
-                                   handlerSettings={handlerSettings}/>,
+                content: <UserHome isHome={true} posts={searchPosts} data={res.user_data} handlerLogOut={handlerLogOut}
+                                   handlerSettings={handlerSettings} handlerGetUser={handlerGetUser}
+                                   appState={state} refresh={handlerUser}/>,
                 type: "userhome"
             })
-        })
+        });
     }
 
     function handlerGetUser(userId) {
-        fetch('api/user_home?id=' + userId).then(res => {
+        if (userId == localStorage.getItem('id')) {
+            handlerUser();
+            return;
+        }
+        fetch('api/get_user?id=' + userId).then(res => {
             if (res.ok) {
                 return res.json();
             }
         }).then(res => {
+            searchPosts = res.posts;
             setState({
-                content: <UserHome isHome={false} data={res} id={userId}/>,
+                content: <UserHome posts={searchPosts} isHome={false} data={res.user_data} id={userId}
+                                   handlerGetUser={handlerGetUser} is_following={res.is_following}/>,
                 type: "getuser",
             })
-        })
+        });
     }
 
     let header;
@@ -145,7 +169,7 @@ function App() {
         state.type === "userhome" ||
         state.type === "search"
     )) {
-        addbutton = <AddButton getState={getState}/>
+        addbutton = <AddButton getState={getState} searchPostHandler={handlerUser}/>
     }
 
     return (

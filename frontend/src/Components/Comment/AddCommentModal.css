@@ -1,0 +1,44 @@
+.comment-add-form-wrapper {
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1500;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#comment-add-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 500px;
+    width: 80vw;
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1600;
+}
+
+
+.upload-image-button {
+    height: max-content;
+    margin-top: 20px;
+    color: blueviolet;
+}
+
+.close-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translate(40%, -40%);
+    border-radius: 50%;
+    background: white;
+    padding: 14px;
+}

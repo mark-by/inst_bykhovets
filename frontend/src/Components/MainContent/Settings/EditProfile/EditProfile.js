@@ -29,7 +29,6 @@ function EditProfile(props) {
                     setErrors(err);
                 });
             }
-            console.log('ok');
             props.avatarHandler(avatar.src, false);
             setErrors({});
         })
@@ -45,8 +44,6 @@ function EditProfile(props) {
         {value: "o", title: "Other"},
         {value: "p", title: "Prefer not to say"},
     ];
-
-    console.log("errors in edit profile", errors);
 
     return (
         <form className="settings-wrapper-content" id="settings-form" onSubmit={submitHandler}

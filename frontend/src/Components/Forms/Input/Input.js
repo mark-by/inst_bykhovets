@@ -16,8 +16,6 @@ function Input(props) {
         stylesInput = {marginTop: "0", borderColor: "red"}
     }
 
-    console.log("error in input", props.error);
-
     return (
         <div className={props.className}>
             <p style={stylesError}>{props.error}</p>

@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'username', 'last_login', 'description', 'name', 'avatar', 'followers_count', 'following_count',
-            'post_count')
+            'post_count', 'id')
 
 
 class SettingsUserSerializer(serializers.ModelSerializer):
@@ -42,7 +42,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('author', 'content', 'description', 'create_at', 'tags', 'total_likes', 'comments')
+        fields = ('id', 'author', 'content', 'description', 'create_at', 'tags', 'total_likes', 'comments')
 
 
 class ShortPostSerializer(serializers.ModelSerializer):

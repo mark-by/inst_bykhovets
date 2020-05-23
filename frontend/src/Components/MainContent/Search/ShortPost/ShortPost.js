@@ -36,11 +36,17 @@ function ShortPost(props) {
         }
     }
 
+    function actionAfterDelete() {
+        setState({isOpen: false});
+        props.actionAfterDeletePost();
+    }
+
     const openedpost =
         <div>
             {init_content}
             <div style={wrapper_styles} id="opened-post-wrapper" onClick={(event) => close(event)}>
-                <Post style={post_styles} id={props.id} imgSrc={props.img_src}/>
+                <Post style={post_styles} id={props.id} imgSrc={props.img_src} handlerGetUser={props.handlerGetUser}
+                actionAfterDeletePost={actionAfterDelete}/>
             </div>
         </div>
 

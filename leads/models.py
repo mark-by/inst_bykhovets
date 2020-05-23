@@ -149,7 +149,6 @@ class Post(models.Model):
         except:
             pass
 
-
     def __str__(self):
         return str(self.description)[:30]
 
@@ -165,7 +164,15 @@ class Like(models.Model):
     class Meta:
         unique_together = ('user', 'post')
 
+
 class Subscription(models.Model):
     author = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
-    followers = models.ForeignKey(User, related_name="followers", on_delete=models.CASCADE)
+    following = models.ForeignKey(User, related_name="followers", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if self.author != self.following:
+            super().save(*args, **kwargs)
+
+    class Meta:
+        unique_together = ('author', 'following')
