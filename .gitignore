@@ -1,5 +1,6 @@
 technoinst/technoinst/local_settings.py
 .idea/*
+technoinst/.idea/*
 technoinst/media/*
 technoinst/frontend/.idea/*
 db.sqlite3

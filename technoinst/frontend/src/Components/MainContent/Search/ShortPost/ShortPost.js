@@ -3,7 +3,7 @@ import "./Post.css"
 import Post from "../../Lenta/Post/Post";
 
 const ShortPost = React.forwardRef((props, ref) => {
-    const init_content = <div onClick={() => setState({isOpen: true})} className="browsed-post"
+    const init_content = <div ref={ref} onClick={() => setState({isOpen: true})} className="browsed-post"
                               style={{backgroundImage: "url(" + props.img_src + ")"}}/>;
     const [state, setState] = React.useState({
         id: props.id,
@@ -31,7 +31,7 @@ const ShortPost = React.forwardRef((props, ref) => {
     };
 
     function close(event) {
-        if (event.target.id === "opened-post-wrapper"){
+        if (event.target.id === "opened-post-wrapper") {
             setState({isOpen: false})
         }
     }
@@ -46,7 +46,7 @@ const ShortPost = React.forwardRef((props, ref) => {
             {init_content}
             <div style={wrapper_styles} id="opened-post-wrapper" onClick={(event) => close(event)}>
                 <Post style={post_styles} id={props.id} imgSrc={props.img_src} handlerGetUser={props.handlerGetUser}
-                actionAfterDeletePost={actionAfterDelete}/>
+                      actionAfterDeletePost={actionAfterDelete}/>
             </div>
         </div>
 
@@ -56,11 +56,7 @@ const ShortPost = React.forwardRef((props, ref) => {
     } else {
         state.content = init_content
     }
-    return (
-        <div ref={ref}>
-            {state.content}
-        </div>
-    )
+    return state.content
 });
 
 export default ShortPost;
