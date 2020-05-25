@@ -1,22 +1,22 @@
-technoinst/local_settings.py
+technoinst/technoinst/local_settings.py
 .idea/*
-media/*
-frontend/.idea/*
+technoinst/media/*
+technoinst/frontend/.idea/*
 db.sqlite3
 */__pycache__/*
 # dependencies
-frontend/node_modules
-frontend/.pnp
-frontend/.pnp.js
+technoinst/frontend/node_modules
+technoinst/frontend/.pnp
+technoinst/frontend/.pnp.js
 venv/*
 env/*
-leads/migrations/*
+technoinst/leads/migrations/*
 
 # testing
-frontend/coverage
+technoinst/frontend/coverage
 
 # production
-frontend/static/frontend/main.js
+technoinst/frontend/static/frontend/main.js
 
 # misc
 frontend/.DS_Store

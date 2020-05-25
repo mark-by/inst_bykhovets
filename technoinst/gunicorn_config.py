@@ -1,5 +1,5 @@
 command = '/home/mark/by-mark.ru/env/bin/gunicorn'
-pythonpath = '/home/mark/by-mark.ru'
+pythonpath = '/home/mark/by-mark.ru/technoinst'
 bind = '127.0.0.1:8005'
 workers = 5
 user = 'mark'
