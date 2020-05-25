@@ -14,11 +14,11 @@ server {
     add_header Strict-Transport-Security 'max-age=604800';
 
     location /static/ {
-        alias /home/mark/by-mark.ru/frontend/static/;
+        alias /home/mark/by-mark.ru/technoinst/frontend/static/;
     }
 
     location /media/ {
-        alias /home/mark/by-mark.ru/media/;
+        alias /home/mark/by-mark.ru/technoinst/media/;
     }
 
 
