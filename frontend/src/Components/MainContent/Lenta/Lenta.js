@@ -1,35 +1,20 @@
 import React from "react";
 import Post from "./Post/Post"
 import "./Lenta.css"
-import {useFetch} from "../../useFetch";
-import usePostSearch from "./usePostSearch";
+import {useFetch} from "../../../Utils/useFetch";
+import useFetchWithPaginate from "../../../Utils/useFetchWithPaginate";
 import loader from "../../../imgs/puff.svg"
+import useRefLastItem from "../../../Utils/useRefLastItem";
 
 function Lenta(props) {
     let [page, setPage] = React.useState(1);
-    const {loading, posts, hasMore} = usePostSearch(page);
-
-    const observer = React.useRef();
-    const lastPostElementRef = React.useCallback(node => {
-        if (loading) {
-            return
-        }
-        if (observer.current) {
-            observer.current.disconnect()
-        }
-        observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
-                setPage(prevPage => prevPage + 1)
-            }
-        })
-        if (node) observer.current.observe(node);
-    }, [loading, hasMore]);
-
+    const {loading, data, hasMore} = useFetchWithPaginate('/api/index', page, 5);
+    const lastPostElementRef = useRefLastItem(loading, hasMore, setPage);
 
     return (
         <div className="lenta-wrapper">
-            {posts.map((post, index) => {
-                if (index + 1 === posts.length) {
+            {data.map((post, index) => {
+                if (index + 1 === data.length) {
                     return <Post ref={lastPostElementRef} data={post} handlerGetUser={props.handlerGetUser}
                                  key={index}/>;
                 } else {

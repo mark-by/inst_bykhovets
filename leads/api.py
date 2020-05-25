@@ -4,15 +4,14 @@ import django.core.exceptions as exceptions
 from django.core.paginator import EmptyPage
 
 from leads.models import User, Post, Tag, Like, Comment, Subscription
-from leads.functions import paginate
+from leads.utils import paginate, ShortUser
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.response import Response
 from django.db.utils import IntegrityError
-from django.db.models import Q
 from .serializers import UserSerializer, SettingsUserSerializer, ShortUserSerializer, ShortPostSerializer, \
-    PostSerializer, SignUpUserSerializer, CommentSerializer
+    PostSerializer, SignUpUserSerializer, CommentSerializer, ShortUserSerializerForList
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -79,9 +78,7 @@ def header_data(request):
 @login_required
 def user_home(request):
     user_serializer = UserSerializer(request.user)
-    posts = request.user.post.all()
-    post_serializer = ShortPostSerializer(posts, many=True)
-    return Response({'user_data': user_serializer.data, 'posts': post_serializer.data})
+    return Response(user_serializer.data)
 
 
 @api_view(['GET'])
@@ -91,12 +88,10 @@ def get_user(request):
     try:
         founded_user = User.objects.get(pk=user_id)
         user_serializer = UserSerializer(founded_user)
-        posts = User.objects.get(pk=user_id).post.all()
-        post_serializer = ShortPostSerializer(posts, many=True)
         is_following = False
         if request.user.following.filter(following=founded_user):
             is_following = True
-        return Response({'user_data': user_serializer.data, 'posts': post_serializer.data, 'is_following': is_following})
+        return Response({'user_data': user_serializer.data, 'is_following': is_following})
     except exceptions.ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -167,13 +162,25 @@ def post(request):
 
 @api_view(['GET'])
 @login_required
-def get_user_posts(request):
-    if 'id' not in request.GET:
-        posts = request.user.post.all()
-        serializer = ShortPostSerializer(posts, many=True)
-        return Response(serializer.data)
+def user_posts(request):
     posts = User.objects.get(pk=request.GET['id']).post.all()
-    serializer = ShortPostSerializer(posts, many=True)
+    try:
+        page = paginate(request, posts)
+    except EmptyPage:
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    serializer = ShortPostSerializer(page.object_list, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@login_required
+def own_posts(request):
+    posts = request.user.post.all()
+    try:
+        page = paginate(request, posts)
+    except EmptyPage:
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    serializer = ShortPostSerializer(page.object_list, many=True)
     return Response(serializer.data)
 
 
@@ -229,6 +236,7 @@ def follow(request):
         following = False
     return Response({'is_following': following}, status=status.HTTP_201_CREATED)
 
+
 @api_view(['GET'])
 @login_required
 @parser_classes([JSONParser])
@@ -242,7 +250,7 @@ def index(request):
     try:
         page = paginate(request, posts)
     except EmptyPage:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
     response_data = []
     for post in page.object_list:
         serializer = PostSerializer(post)
@@ -252,3 +260,45 @@ def index(request):
             {'post': serializer.data, 'is_liked': is_liked, 'is_owner': is_owner}
         )
     return Response(response_data)
+
+
+@api_view(['GET'])
+@login_required
+@parser_classes([JSONParser])
+def browse(request):
+    posts = Post.objects.all()
+    try:
+        page = paginate(request, posts)
+    except EmptyPage:
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response([ShortPostSerializer(post).data for post in page.object_list])
+
+
+@api_view(['GET'])
+@login_required
+def following(request):
+    if 'id' in request.GET:
+        user = User.objects.get(pk=request.GET['id'])
+    else:
+        user = request.user
+    users = [ShortUser(sub.following.username, sub.following.id, sub.following.avatar) for sub in user.following.all()]
+    try:
+        page = paginate(request, users)
+    except EmptyPage:
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response([ShortUserSerializerForList(user).data for user in page.object_list])
+
+
+@api_view(['GET'])
+@login_required
+def followers(request):
+    if 'id' in request.GET:
+        user = User.objects.get(pk=request.GET['id'])
+    else:
+        user = request.user
+    users = [ShortUser(sub.author.username, sub.author.id, sub.author.avatar) for sub in user.followers.all()]
+    try:
+        page = paginate(request, users)
+    except EmptyPage:
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response([ShortUserSerializerForList(user).data for user in page.object_list])

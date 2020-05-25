@@ -2,7 +2,7 @@ import React from "react";
 import "./ChangePassword.css"
 import Button from "../../../Button/Button";
 import user_svg from "../../../../imgs/user.svg";
-import {useFetch} from "../../../useFetch";
+import {useFetch} from "../../../../Utils/useFetch";
 import cfetch from "../../../CsrfToken/cfetch";
 
 function ChangePassword() {

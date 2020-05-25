@@ -69,6 +69,11 @@
     margin: 0 10px;
 }
 
+
+.user-header-wrapper__counters_counter:hover {
+    cursor: pointer;
+}
+
 .user-header-wrapper__counters_counter > .counter {
    font-weight: bold;
 }

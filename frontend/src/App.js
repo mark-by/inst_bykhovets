@@ -71,7 +71,7 @@ function App() {
 
     function handlerBrowse() {
         setState({
-            content: <Search handlerGetUser={handlerGetUser}/>,
+            content: <Search url={'/api/browse'} handlerGetUser={handlerGetUser}/>,
             type: "search"
         })
     }
@@ -121,13 +121,13 @@ function App() {
 
     function handlerUser() {
         fetch('api/user_home').then(res => res.json()).then(res => {
-            searchPosts = res.posts;
             setState({
-                content: <UserHome isHome={true} posts={searchPosts} data={res.user_data} handlerLogOut={handlerLogOut}
+                content: <UserHome isHome={true} data={res} handlerLogOut={handlerLogOut}
                                    handlerSettings={handlerSettings} handlerGetUser={handlerGetUser}
-                                   appState={state} refresh={handlerUser}/>,
+                                   appState={state}/>,
                 type: "userhome"
             })
+            document.querySelector('#refresh-button').click();
         });
     }
 
@@ -141,12 +141,12 @@ function App() {
                 return res.json();
             }
         }).then(res => {
-            searchPosts = res.posts;
             setState({
-                content: <UserHome posts={searchPosts} isHome={false} data={res.user_data} id={userId}
+                content: <UserHome isHome={false} data={res.user_data} id={userId}
                                    handlerGetUser={handlerGetUser} is_following={res.is_following}/>,
                 type: "getuser",
             })
+            document.querySelector('#refresh-button').click();
         });
     }
 
@@ -169,7 +169,7 @@ function App() {
         state.type === "userhome" ||
         state.type === "search"
     )) {
-        addbutton = <AddButton getState={getState} searchPostHandler={handlerUser}/>
+        addbutton = <AddButton getState={getState}/>
     }
 
     return (

@@ -11,8 +11,10 @@ urlpatterns = router.get_urls() + [
     path('api/log_out', log_out),
     path('api/register', register),
     path('api/user_home', user_home),
-    path('api/get_user_posts', get_user_posts),
+    path('api/user_posts', user_posts),
+    path('api/own_posts', own_posts),
     path('api/like', like),
+    path('api/browse', browse),
     path('api/settings', settings),
     path('api/change_password', change_password),
     path('api/comment', comment),
@@ -22,4 +24,6 @@ urlpatterns = router.get_urls() + [
     path('api/follow', follow),
     path('api/get_user', get_user),
     path('api/index', index),
+    path('api/following', following),
+    path('api/followers', followers),
 ] + static(django_settings.MEDIA_URL, document_root=django_settings.MEDIA_ROOT)

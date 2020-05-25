@@ -4,6 +4,13 @@ from django.core.paginator import Paginator, EmptyPage
 from django.http import Http404
 
 
+class ShortUser(object):
+    def __init__(self, username, id, avatar):
+        self.username = username
+        self.id = id
+        self.avatar = avatar
+
+
 def get_hashtags(text):
     check_symbols = string.punctuation.replace('#', '')
     text = text.lower()

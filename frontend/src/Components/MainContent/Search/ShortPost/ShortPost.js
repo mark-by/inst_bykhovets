@@ -2,7 +2,7 @@ import React from "react";
 import "./Post.css"
 import Post from "../../Lenta/Post/Post";
 
-function ShortPost(props) {
+const ShortPost = React.forwardRef((props, ref) => {
     const init_content = <div onClick={() => setState({isOpen: true})} className="browsed-post"
                               style={{backgroundImage: "url(" + props.img_src + ")"}}/>;
     const [state, setState] = React.useState({
@@ -57,10 +57,10 @@ function ShortPost(props) {
         state.content = init_content
     }
     return (
-        <div>
+        <div ref={ref}>
             {state.content}
         </div>
     )
-}
+});
 
 export default ShortPost;

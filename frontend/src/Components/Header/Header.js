@@ -6,7 +6,7 @@ import home_svg from "../../imgs/home.svg";
 import browse_svg from "../../imgs/browse.svg";
 import heart_svg from "../../imgs/heart.svg";
 import Events from "./Events/Events"
-import {useFetch} from "../useFetch";
+import {useFetch} from "../../Utils/useFetch";
 
 function Header(props) {
     const [state, setState] = React.useState({

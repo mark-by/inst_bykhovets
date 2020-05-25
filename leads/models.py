@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from datetime import datetime
-from .functions import get_hashtags
+from .utils import get_hashtags
 import django.core.exceptions as exceptions
 
 

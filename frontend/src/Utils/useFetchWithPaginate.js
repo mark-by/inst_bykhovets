@@ -1,22 +1,31 @@
 import React from 'react';
 import axios from 'axios';
 
-export default function usePostSearch(pageNumber) {
+export default function useFetchWithPaginate(url, pageNumber, limit, additionalParams) {
+    if (!limit) {
+        limit = 5;
+    }
+    const params = {...{page : pageNumber, limit: limit}, ...additionalParams}
     const [loading, setLoading] = React.useState(true);
-    const [posts, setPosts] = React.useState([]);
+    const [data, setData] = React.useState([]);
     const [hasMore, setHasMore] = React.useState(false);
+
+    function refresh(setPage) {
+        setData([]);
+        setPage(1);
+    }
 
     React.useEffect(() => {
         setLoading(true);
         let cancel;
         axios({
             method: 'GET',
-            url: '/api/index',
-            params: {page: pageNumber},
+            url: url,
+            params: params,
             cancelToken: new axios.CancelToken(c => cancel = c)
         }).then(response => {
             if (response.status === 200) {
-                setPosts(prevPosts => {
+                setData(prevPosts => {
                     return [...new Set([...prevPosts, ...response.data])]
                 })
                 setHasMore(true);
@@ -30,5 +39,5 @@ export default function usePostSearch(pageNumber) {
         return () => cancel();
     }, [pageNumber])
 
-    return {loading, posts, hasMore}
+    return {loading, data, hasMore, refresh}
 }

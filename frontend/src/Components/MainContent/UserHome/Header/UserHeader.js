@@ -5,17 +5,21 @@ import Modal from "../../../Modal/Modal";
 import settings_svg from "../../../../imgs/settings.svg";
 import user_svg from "../../../../imgs/user.svg";
 import cfetch from "../../../CsrfToken/cfetch";
+import UserList from "../../../UserList/UserList";
 
 function UserHeader(props) {
     const [state, setState] = React.useState({
         settingsModalIsOpen: false,
     });
+    const [followersList, toggleFollowersList] = React.useState(false);
+    const [followingList, toggleFollowingList] = React.useState(false);
     let [isFollowing, setIsFollowing] = React.useState(props.is_following);
 
     let followButtonText = "Follow";
     if (isFollowing) {
         followButtonText = "Unfollow";
     }
+
     function closeModal() {
         setState({settingsModalIsOpen: false});
     }
@@ -37,10 +41,10 @@ function UserHeader(props) {
             cfetch('/api/follow', {
                 method: "POST",
                 headers: {
-                    "Content-Type" : "application/json",
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify({id : props.id}),
-            }).then(res=> {
+                body: JSON.stringify({id: props.id}),
+            }).then(res => {
                 if (res.ok) {
                     res.json().then(data => {
                         setIsFollowing(data.is_following);
@@ -52,6 +56,10 @@ function UserHeader(props) {
 
     return (
         <div className="user-header-wrapper row">
+            {followersList && <UserList url="/api/followers" handlerGetUser={props.handlerGetUser}
+                                        close={() => toggleFollowersList(false)} additionalParams={{id: props.id}}/>}
+            {followingList && <UserList url="/api/following" handlerGetUser={props.handlerGetUser}
+                                        close={() => toggleFollowingList(false)} additionalParams={{id: props.id}}/>}
             <div className="user-info col">
                 <div className="row">
                     <img className="user-header-wrapper__avatar" src={avatar}/>
@@ -61,8 +69,9 @@ function UserHeader(props) {
                             {props.isHome && <Button
                                 class="settings-button"
                                 img_src={settings_svg}
-                                 onClick={() => setState({settingsModalIsOpen: true})}/> }
-                            {state.settingsModalIsOpen && <Modal buttons={modalButtons} cancelAction={() => closeModal()}/>}
+                                onClick={() => setState({settingsModalIsOpen: true})}/>}
+                            {state.settingsModalIsOpen &&
+                            <Modal buttons={modalButtons} cancelAction={() => closeModal()}/>}
                         </div>
                         {button}
                     </div>
@@ -80,11 +89,13 @@ function UserHeader(props) {
                             <div id="post-counter" className="counter">{props.data.post_count}</div>
                             <div className="counter-description">posts</div>
                         </div>
-                        <div className="user-header-wrapper__counters_counter col">
+                        <div className="user-header-wrapper__counters_counter col"
+                             onClick={() => toggleFollowersList(true)}>
                             <div id="followers-counter" className="counter">{props.data.followers_count}</div>
                             <div className="counter-description">followers</div>
                         </div>
-                        <div className="user-header-wrapper__counters_counter col">
+                        <div className="user-header-wrapper__counters_counter col"
+                             onClick={() => toggleFollowingList(true)}>
                             <div id="following-counter" className="counter">{props.data.following_count}</div>
                             <div className="counter-description">following</div>
                         </div>

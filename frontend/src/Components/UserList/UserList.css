@@ -1,0 +1,30 @@
+.user-list-wrapper {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1500;
+}
+
+.user-list {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 15px;
+    padding: 5px;
+    max-height: 80%;
+    overflow-y: scroll;
+}
+
+.user-list::-webkit-scrollbar {
+    display: none;
+}
+
+.user-list__item {
+    display: flex;
+    margin: 2px;
+}

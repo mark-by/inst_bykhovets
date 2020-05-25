@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from leads.models import User, Post, Comment
+from leads.models import User, Post, Comment, Subscription
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,6 +26,12 @@ class ShortUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'avatar', 'id')
+
+
+class ShortUserSerializerForList(serializers.Serializer):
+    username = serializers.CharField(max_length=60)
+    id = serializers.IntegerField()
+    avatar = serializers.ImageField()
 
 
 class CommentSerializer(serializers.ModelSerializer):

@@ -30,7 +30,7 @@ function CreationPostForm(props) {
                    post_counter.innerText = (parseInt(post_counter.innerText) + 1).toString()
                }
                if (props.getState().type === "userhome") {
-                   props.searchPostHandler();
+                   document.querySelector('#refresh-button').click();
                }
            } else {
                console.log(res.status)

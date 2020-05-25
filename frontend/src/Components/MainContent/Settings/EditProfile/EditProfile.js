@@ -2,7 +2,7 @@ import React from "react";
 import "./EditProfile.css"
 import Button from "../../../Button/Button";
 import user_svg from '../../../../imgs/user.svg'
-import {useFetch} from "../../../useFetch";
+import {useFetch} from "../../../../Utils/useFetch";
 import cfetch from "../../../CsrfToken/cfetch";
 import Select from "../../../Forms/Select/Select";
 import Input from "../../../Forms/Input/Input";
