@@ -1,3 +1,6 @@
+proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=technoinst_cache:10m max_size=9000g inactive=1d;
+proxy_temp_path /var/cache/nginx/tmp;
+
 server {
     listen 443 ssl http2;
 
@@ -25,6 +28,8 @@ server {
     location / {
         proxy_pass        http://127.0.0.1:8005;
         proxy_redirect    off;
+        proxy_cache       technoinst_cache;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
         add_header        Access-Control-Allow-Origin *;
         proxy_set_header  X-Real_IP $remote_addr;
         proxy_set_header  X-NginX-Proxy true;
